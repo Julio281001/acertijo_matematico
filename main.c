@@ -1,8 +1,42 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
+#define STR_MAX_SIZE 256
+
+int nusuarios = 2;
+char usuarios[100][STR_MAX_SIZE] = {"julio", "cesar"};
+
+void registro()
+{
+    char usuario[STR_MAX_SIZE];
+    int i;
+    bool existe = false;
+    do
+    {
+        printf("Ingresa tu nombre de usuario:");
+        scanf("%s", usuario); // cesar
+
+        for (i = 0; i < nusuarios; i++) // i = 1
+        {
+            if (strcmp(usuario, usuarios[i]) == 0)
+            {
+                printf("Ese usuario ya existe\n");
+                existe = true;
+                break;
+            }
+            if (i == nusuarios - 1)
+            {
+                existe = false;
+            }
+        }
+    } while (existe);
+    strcpy(usuarios[nusuarios], usuario);
+    nusuarios++;
+}
 
 int main()
 {
+    char letra = 'a';
     int opcion;
     bool seguirJugando = true;
     do
@@ -13,7 +47,7 @@ int main()
         switch (opcion)
         {
         case 1:
-            printf("registrando");
+            registro();
             break;
         case 2:
             printf("verificando");
