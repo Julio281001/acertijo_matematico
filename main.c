@@ -55,11 +55,12 @@ void verificarPuntuaciones()
             printf("%s Usuario no existente, ingrese otro\n", usuario);
         }
     } while (indiceUsuario == -1);
-    printf("%s tiene %d puntos\n", usuarios[indiceUsuario], puntuaciones[indiceUsuario]);
+    printf("%s tiene %d puntos", usuarios[indiceUsuario], puntuaciones[indiceUsuario]);
+    printf(", su posicion en el ranking es %d\n", indiceUsuario + 1);
     printf("\nRanking:\n");
     for (int i = 0; i < nUsuarios; i++)
     {
-        printf("%s: %d puntos\n", usuarios[i], puntuaciones[i]);
+        printf("%d.) %s: %d puntos\n", i + 1, usuarios[i], puntuaciones[i]);
     }
 }
 
