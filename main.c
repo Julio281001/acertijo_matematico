@@ -6,6 +6,20 @@
 int nUsuarios = 2;
 char usuarios[100][STR_MAX_SIZE] = {"julio", "cesar"};
 
+int obtenerIndiceUsuario(char usuario[])
+{
+    // Checa si usuario existe en el arreglo de usuarios,
+    // si sí existe retorna su índice, si no existe retorna -1
+    for (int i = 0; i < nUsuarios; i++)
+    {
+        if (strcmp(usuario, usuarios[i]) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void registro()
 {
     char usuario[STR_MAX_SIZE];
