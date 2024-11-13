@@ -23,29 +23,21 @@ int obtenerIndiceUsuario(char usuario[])
 void registro()
 {
     char usuario[STR_MAX_SIZE];
-    int i;
+    int indiceUsuario;
     bool existe = false;
     do
     {
         printf("Ingresa tu nombre de usuario:");
         scanf("%s", usuario);
-
-        for (i = 0; i < nUsuarios; i++)
+        indiceUsuario = obtenerIndiceUsuario(usuario);
+        if (indiceUsuario >= 0)
         {
-            if (strcmp(usuario, usuarios[i]) == 0)
-            {
-                printf("Ese usuario ya existe\n");
-                existe = true;
-                break;
-            }
-            if (i == nUsuarios - 1)
-            {
-                existe = false;
-            }
+            printf("%s ya existe, ingresa otro\n", usuario);
         }
-    } while (existe);
+    } while (indiceUsuario >= 0);
     strcpy(usuarios[nUsuarios], usuario);
     nUsuarios++;
+    printf("%s ha sido registrado correctamente\n", usuario);
 }
 
 int main()
