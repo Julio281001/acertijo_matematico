@@ -5,6 +5,7 @@
 
 int nUsuarios = 2;
 char usuarios[100][STR_MAX_SIZE] = {"julio", "cesar"};
+int puntuaciones[100] = {100, 30};
 
 int obtenerIndiceUsuario(char usuario[])
 {
@@ -40,6 +41,28 @@ void registro()
     printf("%s ha sido registrado correctamente\n", usuario);
 }
 
+void verificarPuntuaciones()
+{
+    char usuario[STR_MAX_SIZE];
+    int indiceUsuario;
+    do
+    {
+        printf("Ingresa tu nombre de usuario:");
+        scanf("%s", usuario);
+        indiceUsuario = obtenerIndiceUsuario(usuario);
+        if (indiceUsuario == -1)
+        {
+            printf("%s Usuario no existente, ingrese otro\n", usuario);
+        }
+    } while (indiceUsuario == -1);
+    printf("%s tiene %d puntos\n", usuarios[indiceUsuario], puntuaciones[indiceUsuario]);
+    printf("\nRanking:\n");
+    for (int i = 0; i < nUsuarios; i++)
+    {
+        printf("%s: %d puntos\n", usuarios[i], puntuaciones[i]);
+    }
+}
+
 int main()
 {
     int opcion;
@@ -55,7 +78,7 @@ int main()
             registro();
             break;
         case 2:
-            printf("verificando");
+            verificarPuntuaciones();
             break;
         case 3:
             printf("jugando");
