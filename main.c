@@ -25,6 +25,9 @@ void registro()
 {
     char usuario[STR_MAX_SIZE];
     int indiceUsuario;
+    // El siguiente bucle tiene la tarea de pedir un nombre
+    // de usuario hasta que se ingrese uno que no haya
+    // sido registrado previamente.
     do
     {
         printf("Ingresa tu nombre de usuario:");
@@ -35,6 +38,11 @@ void registro()
             printf("%s ya existe, ingresa otro\n", usuario);
         }
     } while (indiceUsuario >= 0);
+    // Cuando el programa sale del bucle anterior significa que el usuario
+    // ingresado no fue registrado previamente, por lo que sólo
+    // resta agregarlo al arreglo de usuarios e incializar su puntaje en
+    // cero en el arreglo puntuaciones.
+    // Lo descrito anteriormente es lo que sucede a continuación.
     strcpy(usuarios[nUsuarios], usuario);
     puntuaciones[nUsuarios] = 0;
     nUsuarios++;
@@ -45,6 +53,9 @@ void verificarPuntuaciones()
 {
     char usuario[STR_MAX_SIZE];
     int indiceUsuario;
+    // El siguiente bucle tiene la tarea de pedir un nombre
+    // de usuario hasta que se ingrese uno que haya sido
+    // registrado previamente.
     do
     {
         printf("Ingresa tu nombre de usuario:");
@@ -55,6 +66,16 @@ void verificarPuntuaciones()
             printf("%s Usuario no existente, ingrese otro\n", usuario);
         }
     } while (indiceUsuario == -1);
+    // Cuando el programa sale del bucle anterior significa que el usuario
+    // ingresado fue registrado previamente, o, en otras palabras,
+    // que el usuario ingresado sí existe en el arreglo de usuarios.
+    // La variable indiceUsuario guardaría el índice del usuario ingresado dentro
+    // del arreglo de usuarios. Gracias a este índice se puede acceder al puntaje
+    // del usuario, ya que los usuarios están mapeados a sus puntuaciones por medio
+    // su índice. Por ejemplo, el puntaje del usuario en la posición cero del arreglo de
+    // usuarios sería el entero almacenado en la posición cero del arreglo de puntuaciones.
+    // Sólo restaría mostrar la información del usuario ingresado y el ranking. Esto
+    // sucede a continuación.
     printf("%s tiene %d puntos", usuarios[indiceUsuario], puntuaciones[indiceUsuario]);
     printf(", su posicion en el ranking es %d\n", indiceUsuario + 1);
     printf("\nRanking:\n");
