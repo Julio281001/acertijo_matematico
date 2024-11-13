@@ -36,6 +36,7 @@ void registro()
         }
     } while (indiceUsuario >= 0);
     strcpy(usuarios[nUsuarios], usuario);
+    puntuaciones[nUsuarios] = 0;
     nUsuarios++;
     printf("%s ha sido registrado correctamente\n", usuario);
 }
