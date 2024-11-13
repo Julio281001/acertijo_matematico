@@ -25,7 +25,6 @@ void registro()
 {
     char usuario[STR_MAX_SIZE];
     int indiceUsuario;
-    bool existe = false;
     do
     {
         printf("Ingresa tu nombre de usuario:");
