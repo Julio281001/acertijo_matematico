@@ -190,7 +190,7 @@ void verificarPuntuaciones()
 void jugar()
 {
     char usuario[STR_MAX_SIZE];
-    int indiceUsuario;
+    int indiceUsuario, respuesta, errores = 0, aciertos = 0;
     printf("Ingresa tu nombre de usuario:");
     scanf("%s", usuario);
     indiceUsuario = obtenerIndiceUsuario(usuario);
@@ -199,8 +199,86 @@ void jugar()
         printf("%s Usuario no existente, ingrese otro\n", usuario);
         return;
     }
-    int indicesAcertijos[ACERTIJOS_POR_PARTIDA];
+    int indicesAcertijos[ACERTIJOS_POR_PARTIDA], puntajePartida = 0;
     obtenerAcertijos(indicesAcertijos);
+    for (int i = 0; i < ACERTIJOS_POR_PARTIDA; i++)
+    {
+        while (errores < 3)
+        {
+            printf("(%d) %s\n", DIFICULTADES[indicesAcertijos[i]], ACERTIJOS[indicesAcertijos[i]]);
+            scanf("%d", &respuesta);
+            if (respuesta == REPUESTAS[indicesAcertijos[i]])
+            {
+                printf("Respuesta Correcta!\n");
+                aciertos++;
+                switch (DIFICULTADES[indicesAcertijos[i]])
+                {
+                case 1:
+                    puntajePartida += 10;
+                    break;
+
+                case 2:
+                    puntajePartida += 20;
+                    break;
+
+                case 3:
+                    puntajePartida += 30;
+                    break;
+                }
+                break;
+            }
+            else
+            {
+                errores++;
+                printf("Resputa incorrecta\n");
+            }
+        }
+    }
+    if (errores == 3)
+    {
+        printf("\nIntentos agotados\n");
+    }
+    if (aciertos == 8 && errores == 0)
+    {
+        puntajePartida *= 2;
+    }
+    else if (aciertos == 8 && errores == 1)
+    {
+        puntajePartida += 30;
+    }
+    else if (aciertos == 8 && errores == 2)
+    {
+        puntajePartida += 25;
+    }
+    else if (aciertos == 7)
+    {
+        puntajePartida += 20;
+    }
+    else if (aciertos == 6)
+    {
+        puntajePartida += 15;
+    }
+    else if (aciertos == 5)
+    {
+        puntajePartida += 10;
+    }
+    else if (aciertos == 4)
+    {
+        puntajePartida -= 5;
+    }
+    else if (aciertos == 3)
+    {
+        puntajePartida -= 10;
+    }
+    else if (aciertos == 2)
+    {
+        puntajePartida -= 15;
+    }
+    else if (aciertos == 1)
+    {
+        puntajePartida = 1;
+    }
+    printf("\nTu puntaje final es: %d\n", puntajePartida);
 }
 
 int main()
