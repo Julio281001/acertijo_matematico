@@ -64,7 +64,7 @@ bool existe(int target, int array[], int size)
 
 void obtenerAcertijos(int indicesAcertijos[])
 {
-    srand(time(NULL));
+    // Llena el arreglo indicesAcertijos con índices aleatorios del arreglo de acertijos
     const int NUMERO_DE_CATEGORIAS = 3;
     const int CANTIDADES[] = {3, 3, 2};
     // CANTIDADES[0] es la cantidad de acertijos sencillos
@@ -117,10 +117,113 @@ void obtenerAcertijos(int indicesAcertijos[])
             size++;
         }
         // En este punto ya fueron generados todos los índices de X categoría, por lo que, con el fin de que en la
-        // siguiente iteración se escogan acertijos de la siguiente categoría, hay que incrementar modificar el rango.
+        // siguiente iteración se escogan acertijos de la siguiente categoría, hay que modificar el rango.
         inicio += 5;
         final += 5;
     }
+}
+
+int calcularPuntajeFinal(int aciertos, int errores, int puntajePartida)
+{
+    // Calcula y retorna el puntaje final
+    if (aciertos == 8 && errores == 0)
+    {
+        puntajePartida *= 2;
+    }
+    else if (aciertos == 8 && errores == 1)
+    {
+        puntajePartida += 30;
+    }
+    else if (aciertos == 8 && errores == 2)
+    {
+        puntajePartida += 25;
+    }
+    else if (aciertos == 7)
+    {
+        puntajePartida += 20;
+    }
+    else if (aciertos == 6)
+    {
+        puntajePartida += 15;
+    }
+    else if (aciertos == 5)
+    {
+        puntajePartida += 10;
+    }
+    else if (aciertos == 4)
+    {
+        puntajePartida -= 5;
+    }
+    else if (aciertos == 3)
+    {
+        puntajePartida -= 10;
+    }
+    else if (aciertos == 2)
+    {
+        puntajePartida -= 15;
+    }
+    else if (aciertos == 1)
+    {
+        puntajePartida = 1;
+    }
+    return puntajePartida;
+}
+
+void actualizarPuntaje(int indiceUsuario, int puntajePartida)
+{
+    // Actualiza, si es necesario, el puntaje del usuario y el ranking.
+
+    // No hace falta actualizar el ranking ni el puntaje del usuario si este no rompió su record.
+    if (puntajePartida <= puntuaciones[indiceUsuario])
+    {
+        return;
+    }
+    // Si el usuario rompió su record, hay que ver si superó a otro jugador en el ranking;
+    int nuevoIndice = -1;
+    for (int i = 0; i < indiceUsuario; i++)
+    {
+        if (puntajePartida > puntuaciones[i])
+        {
+            nuevoIndice = i;
+            break;
+        }
+    }
+    // Si nuevoIndice es -1 significa que el nuevo record no superó a nadie, por lo que no hace falta actualizar el ranking,
+    // simplemente hay que actualizar el puntaje del jugador. El siguiente if se hace cargo de lo anterior.
+    if (nuevoIndice == -1)
+    {
+        puntuaciones[indiceUsuario] = puntajePartida;
+        return;
+    }
+    // Si nuevoIndice es mayor o igual que cero significa que el nuevo record sí superó a por lo menos un record, por lo
+    // que no sólo basta con actualizar el puntaje del usuario, sino que hay que actualizar el ranking, esto sucede a
+    // continuación.
+
+    char usuario[STR_MAX_SIZE];
+    strcpy(usuario, usuarios[indiceUsuario]);
+    // Debido a cómo está implementado el algoritmo que actualiza el ranking, primero se debe guardar el nombre del usuario,
+    // este se guarda en el arreglo usuario. No hace falta guardar el puntaje, ya que, al final, este será reemplazado por el
+    // nuevo puntaje.
+
+    // Supongamos que, por ejemplo, julio, cesar y david son los únicos usuarios registrados y sus puntuaciones son
+    // 100, 20 y 0 respectivamente. El arreglo de usuarios se vería de la siguiente manera: ["julio", "cesar", "david"],
+    // el arreglo puntuaciones se vería así: [100, 20, 0]. Si en una partida david obtiene 30 puntos, no sólo basta con
+    // actualizar su puntaje más alto, ya que si sólo hacemos eso tendríamos algo así: [100, 20, 30], esto no es bueno,
+    // ya que el arreglo no estaría ordenado, y por ende tampoco el ranking. En el caso anterior, después de que el código
+    // de arriba haya sido ejecutado, la variable nuevoIndice sería igual a uno, esto significa que para que el arreglo este
+    // ordenado debemos mover a david y a su puntaje a la posición uno de sus respectivos arreglos, pero antes de hacer esto
+    // hay que mover a cesar y a su puntaje, 20, una posición hacia adelante, es decir, cesar está en la posición uno, por
+    // lo que hay que moverlo a la dos, lo mismo con su puntaje.
+    // En pocas palabras, el objetivo del siguiente for es dejar libre la posición determinada por la variable nuevoIndice.
+    for (int i = indiceUsuario; i > nuevoIndice; i--)
+    {
+        puntuaciones[i] = puntuaciones[i - 1];
+        strcpy(usuarios[i], usuarios[i - 1]);
+    }
+    // Hecho lo anterior, y retomando el ejemplo anterior, el de david, ya podemos mover a david a usuarios[nuevoIndice],
+    // así como poner en puntuaciones[nuevoIndice] su nuevo record.
+    strcpy(usuarios[nuevoIndice], usuario);
+    puntuaciones[nuevoIndice] = puntajePartida;
 }
 
 void registro()
@@ -190,19 +293,29 @@ void verificarPuntuaciones()
 void jugar()
 {
     char usuario[STR_MAX_SIZE];
-    int indiceUsuario, respuesta, errores = 0, aciertos = 0;
+    int indiceUsuario;
     printf("Ingresa tu nombre de usuario:");
     scanf("%s", usuario);
     indiceUsuario = obtenerIndiceUsuario(usuario);
+    // Para poder jugar es necesario ingresar un usuario que haya sido registrado previemente, el siguiente if
+    // compara indiceUsuario con -1, si estos dos son iguales significa que el usuario ingresado no existe,
+    // por lo que el programa debe regresar a la función main
     if (indiceUsuario == -1)
     {
         printf("%s Usuario no existente, ingrese otro\n", usuario);
         return;
     }
-    int indicesAcertijos[ACERTIJOS_POR_PARTIDA], puntajePartida = 0;
+    // Una partida consta de ocho acertijos, por lo que ahora resta determinar cuáles acertijos se preguntarán
+    // en la partida en curso, la función obtenerAcertijos se encarga de esto. Una vez que la función obtenerAcertijos
+    // termine, el arreglo indicesAcertijos tendrá los índices de los acertijos que se preguntarán.
+    int indicesAcertijos[ACERTIJOS_POR_PARTIDA], puntajePartida = 0, respuesta, errores = 0, aciertos = 0;
     obtenerAcertijos(indicesAcertijos);
+    // El siguiente for es para mostrar los ocho acertijos.
     for (int i = 0; i < ACERTIJOS_POR_PARTIDA; i++)
     {
+        // Hay que preguntar el mismo acertijo si la respuesta ingresada es incorrecta y el número de errores es menor
+        // que tres. Si el numero de errores es tres la partida termina, si la respuesta no es incorrecta, es decir, es
+        // correcta, simplemente incrementamos el puntaje y pasamos al siguiente acertijo.
         while (errores < 3)
         {
             printf("(%d) %s\n", DIFICULTADES[indicesAcertijos[i]], ACERTIJOS[indicesAcertijos[i]]);
@@ -233,56 +346,24 @@ void jugar()
                 printf("Resputa incorrecta\n");
             }
         }
+        if (errores == 3)
+        {
+            // Si errores es igual a tres hay que finalizar la partida
+            printf("\nIntentos agotados\n");
+            break;
+        }
     }
-    if (errores == 3)
-    {
-        printf("\nIntentos agotados\n");
-    }
-    if (aciertos == 8 && errores == 0)
-    {
-        puntajePartida *= 2;
-    }
-    else if (aciertos == 8 && errores == 1)
-    {
-        puntajePartida += 30;
-    }
-    else if (aciertos == 8 && errores == 2)
-    {
-        puntajePartida += 25;
-    }
-    else if (aciertos == 7)
-    {
-        puntajePartida += 20;
-    }
-    else if (aciertos == 6)
-    {
-        puntajePartida += 15;
-    }
-    else if (aciertos == 5)
-    {
-        puntajePartida += 10;
-    }
-    else if (aciertos == 4)
-    {
-        puntajePartida -= 5;
-    }
-    else if (aciertos == 3)
-    {
-        puntajePartida -= 10;
-    }
-    else if (aciertos == 2)
-    {
-        puntajePartida -= 15;
-    }
-    else if (aciertos == 1)
-    {
-        puntajePartida = 1;
-    }
-    printf("\nTu puntaje final es: %d\n", puntajePartida);
+    // En este punto la partida ya finalizó, quizá el usuario se equivocó tres veces, o quizá respondió todos los
+    // acertijos, la razón por la que la partida acabó no importa, ya que en ambos casos hay que calcular el puntaje final,
+    // actualizar el record del usuario, si es que lo rompió y, finalmente, y si es necesario, actualizar el ranking.
+    int puntajeFinal = calcularPuntajeFinal(aciertos, errores, puntajePartida);
+    printf("\nTu puntaje final es: %d\n", puntajeFinal);
+    actualizarPuntaje(indiceUsuario, puntajeFinal);
 }
 
 int main()
 {
+    srand(time(NULL));
     int opcion;
     bool seguirJugando = true;
     do
