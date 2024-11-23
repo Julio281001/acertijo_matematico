@@ -4,28 +4,43 @@
 #include <string.h>
 #include <time.h>
 #define STR_MAX_SIZE 256
-#define ACERTIJOS_POR_PARTIDA 8
 
 int nUsuarios = 2;
 char usuarios[100][STR_MAX_SIZE] = {"julio", "cesar"};
 int puntuaciones[100] = {100, 30};
-const char ACERTIJOS[100][STR_MAX_SIZE] = {"¿Cuánto es 3 + 5?",
-                                           "Si tienes 10 manzanas y das 3, ¿cuántas te quedan?",
-                                           "¿Cuánto es 7 - 2?",
-                                           "Si un reloj marca las 12 y pasan 3 horas, ¿qué hora es?",
-                                           "¿Cuánto es 2 * 3?",
-                                           "¿Cuánto es 12 / 4 + 3 * 2?",
-                                           "Si tienes 4 pares de zapatos y compras 3 pares más, ¿cuántos zapatos tienes en total?",
-                                           "La mitad de 64 es igual a la mitad de 32 multiplicada por 2. ¿Es cierto? (1 para Sí, 0 para No)",
-                                           "Si un tren recorre 60 km en una hora, ¿cuánto recorrerá en 3.5 horas?",
-                                           "¿Cuánto es 15 + 15 / 3?",
-                                           "Si x + 2x = 90, ¿cuánto vale x?",
-                                           "¿Cuál es el valor de x si 3x - 15 = 30?",
-                                           "Si un cubo tiene un volumen de 125 cm³, ¿cuál es la longitud de su lado?",
-                                           "Si la suma de dos números es 50 y su diferencia es 20, ¿cuáles son esos números? (Suma los dos números)",
-                                           "Si 8x = 64, ¿cuánto es x * 5?"};
-const int REPUESTAS[] = {8, 7, 5, 3, 6, 9, 14, 1, 210, 20, 30, 15, 5, 35, 40};
-const int DIFICULTADES[] = {1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3};
+
+const char ACERTIJOS[100][STR_MAX_SIZE] = {
+    // Acertijos sencillos
+    "¿Cuánto es 3 + 5?", "Si tienes 10 manzanas y das 3, ¿cuántas te quedan?", "¿Cuánto es 7 - 2?",
+    "Si un reloj marca las 12 y pasan 3 horas, ¿qué hora es?", "¿Cuánto es 2 * 3?", "¿Cuánto es 4 + 4?",
+    "Si tienes 6 perros y regalas 2, ¿cuántos te quedan?", "¿Cuánto es 10 - 4?", "Si tienes 3 manzanas y compras 4 más, ¿cuántas tienes en total?",
+    "¿Cuánto es 5 + 2?",
+    // Acertijos medios
+    "¿Cuánto es 12 / 4 + 3 * 2?", "Si tienes 4 pares de zapatos y compras 3 pares más, ¿cuántos zapatos tienes en total?",
+    "La mitad de 64 es igual a la mitad de 32 multiplicada por 2. ¿Es cierto? (1 para Sí, 0 para No)",
+    "Si un tren recorre 60 km en una hora, ¿cuánto recorrerá en 3.5 horas?", "¿Cuánto es 15 + 15 / 3?", "¿Cuánto es 18 / 2 + 6?",
+    "Si tienes 20 caramelos y comes 7, ¿cuántos te quedan?",
+    "Un triángulo tiene lados de 3 cm, 4 cm y 5 cm. ¿Es un triángulo rectángulo? (1 para Sí, 0 para No)",
+    "Si tienes 8 lápices y regalas 3, ¿cuántos tienes ahora?", "¿Cuánto es 14 - 6 + 2?",
+    // Acertijos avanzados
+    "Si x + 2x = 90, ¿cuánto vale x?", "¿Cuál es el valor de x si 3x - 15 = 30?",
+    "Si un cubo tiene un volumen de 125 cm³, ¿cuál es la longitud de su lado?",
+    "Si la suma de dos números es 50 y su diferencia es 20, ¿cuáles son esos números? (Suma los dos números)", "Si 8x = 64, ¿cuánto es x * 5?",
+    "Si un cuadrado tiene un área de 49 cm², ¿cuánto mide cada lado?", "Resuelve: 2x + 3 = 11. ¿Cuánto vale x?",
+    "Si la hipotenusa de un triángulo rectángulo es 13 y un cateto es 5, ¿cuánto mide el otro cateto?", "Si 3x + 5 = 20, ¿cuánto vale x?",
+    "Una tienda ofrece un 20% de descuento en un artículo de $100. ¿Cuál es el precio con descuento?"};
+const int REPUESTAS[] = {
+    // Respuestas de los sencillos
+    8, 7, 5, 3, 6, 8, 4, 6, 7, 7,
+    // Respuestas de los medios
+    9, 14, 1, 210, 20, 15, 13, 1, 5, 10,
+    // Respuestas de los avanzados
+    30, 15, 5, 35, 40, 7, 4, 12, 5, 80};
+const int DIFICULTADES[] = {
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // Sencillos
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // Medios
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3  // Avanzados
+};
 
 int obtenerIndiceUsuario(char usuario[])
 {
@@ -65,6 +80,7 @@ bool existe(int target, int array[], int size)
 void obtenerAcertijos(int indicesAcertijos[])
 {
     // Llena el arreglo indicesAcertijos con índices aleatorios del arreglo de acertijos
+    const int ACERTIJOS_POR_CATEGORIA = 10;
     const int NUMERO_DE_CATEGORIAS = 3;
     const int CANTIDADES[] = {3, 3, 2};
     // CANTIDADES[0] es la cantidad de acertijos sencillos
@@ -73,7 +89,7 @@ void obtenerAcertijos(int indicesAcertijos[])
     int size = 0;
     // size es el tamaño del arreglo indicesAcertijos, el cual guardará los índices de los acertijos
     // que se preguntarán en la partida. En es este punto el arreglo está vacío, por lo tanto size es cero.
-    int inicio = 0, final = 4;
+    int inicio = 0, final = ACERTIJOS_POR_CATEGORIA - 1;
     // inicio y final servirán para establecer el rango para generar un índice aleatorio.
     int randomIndex;
     // randonIndex guardará el índice aleatorio.
@@ -83,20 +99,20 @@ void obtenerAcertijos(int indicesAcertijos[])
     //
     // En la primera iteración, cuando i es cero, se seleccionan los acertijos sencillos, cuando esta termine,
     // puesto que previemente se estableció en el arreglo CANTIDADES que una partida siempre tendrá tres acertijos
-    // sencillos, tendremos tres enteros distintos que se encuentran en el rango [0-4] y que fueron seleccionados
+    // sencillos, tendremos tres enteros distintos que se encuentran en el rango [0-9] y que fueron seleccionados
     // de manera aleatoria, estos enteros son los índices de tres acertijos sencillos del arreglo acertijos.
     // Hay que tener en cuenta que los primeros cinco acertijos del arreglo de acertijos son acertijos sencillos,
-    // es por esto que el rango debe de ser [0-4], el cual es determinado por las variables inicio y final.
+    // es por esto que el rango debe de ser [0-9], el cual es determinado por las variables inicio y final.
     //
     // En la segunda iteración, cuando i es uno, toca escoger los acertijos medios, es por esto que el rango debe de
-    // ser [5-9], ya que los acertijos medios van desde la posición cinco hasta la posición nueve del arreglo de acertijos.
+    // ser [10-19], ya que los acertijos medios van desde la posición cinco hasta la posición nueve del arreglo de acertijos.
     // Una vez establecido el rango, sólo resta generar tres números aleatorios distintos que se encuentren en el rango
     // establecido, en este caso también se deben generar tres números, ya que CANTIDADES[1], entero que representa la
     // cantidad de acertijos medios por partida, es tres.
     //
     // Ya tenemos seis acertijos, tres sencillos y tres medios, necesitamos ocho, por lo que ahora hay que escoger dos
     // acertijos avanzados, estos van desde la posición diez hasta la posición catorce del arreglo de acertijos, por lo
-    // que los dos números aleatorios distintos que serán generados deben de estar en el rango [10-14].
+    // que los dos números aleatorios distintos que serán generados deben de estar en el rango [20-29].
     for (int i = 0; i < NUMERO_DE_CATEGORIAS; i++)
     {
         // El siguiente for es para generar la cantidad necesaria de acertijos según su categoría, esta cantidad
@@ -118,8 +134,8 @@ void obtenerAcertijos(int indicesAcertijos[])
         }
         // En este punto ya fueron generados todos los índices de X categoría, por lo que, con el fin de que en la
         // siguiente iteración se escogan acertijos de la siguiente categoría, hay que modificar el rango.
-        inicio += 5;
-        final += 5;
+        inicio += ACERTIJOS_POR_CATEGORIA;
+        final += ACERTIJOS_POR_CATEGORIA;
     }
 }
 
@@ -308,6 +324,7 @@ void jugar()
     // Una partida consta de ocho acertijos, por lo que ahora resta determinar cuáles acertijos se preguntarán
     // en la partida en curso, la función obtenerAcertijos se encarga de esto. Una vez que la función obtenerAcertijos
     // termine, el arreglo indicesAcertijos tendrá los índices de los acertijos que se preguntarán.
+    const int ACERTIJOS_POR_PARTIDA = 8;
     int indicesAcertijos[ACERTIJOS_POR_PARTIDA], puntajePartida = 0, respuesta, errores = 0, aciertos = 0;
     obtenerAcertijos(indicesAcertijos);
     // El siguiente for es para mostrar los ocho acertijos.
